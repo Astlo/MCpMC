@@ -2,7 +2,7 @@ from collections import defaultdict
 from ply import lex,yacc
 from sympy.parsing.sympy_parser import parse_expr as rea
 from sympy import Function, Symbol
-from modules import PmcModules, Module
+from modules.modules import PmcModules, Module
 #from memory_profiler import profile
 
 
@@ -20,10 +20,10 @@ def myparse(filepath):
     dic={}
     # associate to string their type (or default when variable are not yet define) !! float are treated as int
     type=defaultdict(lambda: "default")
-    
+
     # The pmc we are building
     pmc=PmcModules()
-    
+
     #The module that is currently built
     curentMod = None
 
@@ -271,7 +271,7 @@ def myparse(filepath):
         dic[p[3]] = rea(p[3],dic)
         type[p[3]] = "int"
         pmc.add_parameter(dic[p[3]])
-    
+
     def p_declParamMultiple(p):
         'declParam : PARAM type NAME LACCO funexp POINTPOINT funexp RACCO'
         global paramnameglob
@@ -281,8 +281,8 @@ def myparse(filepath):
         t2,e2 = p[7]
         for i in range(rea(e1, dic), rea(e2, dic)+1):
             pmc.add_parameter(Symbol(p[3]+str(i)))
-    
-    
+
+
 
     def p_type(p):
         '''type : empty
@@ -502,7 +502,7 @@ def myparse(filepath):
                     pmc.add_reward('', rea(e, dic), rea(er, dic))
                 else:
                     raise Exception("Invalid type in condition of reward "+p[2])
-                    
+
 
 
 
@@ -604,7 +604,7 @@ def myparse(filepath):
     def p_funexpVar(p):
         'funexp : NAME'
         p[0] = [type[p[1]], p[1]]
-    
+
     def p_funexpParam(p):
         'funexp : NAME LACCO funexp RACCO'
         _,e = p[3]

@@ -1,6 +1,6 @@
 """ Simulation of pMC with modules"""
 from random import random
-from modules import mysub
+from .modules import mysub
 
 def typennotexp(expr):
     """return true if type is int or float"""

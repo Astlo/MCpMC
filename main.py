@@ -1,9 +1,12 @@
+from dill.source import getsource
+
+
+
 from math import sqrt
 from random import random
 #from sys import argv
-from parser import myparse
 #from modules import mysub
-from simumodules import simu
+from modules.simumodules import simu
 import time
 from memory_profiler import profile
 #import re
@@ -13,16 +16,50 @@ import numpy as np
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 import sympy
+from modules.parse import myparse
+
+def test():
+    file = 'example/toy.pm'
+    pmc = myparse(file)
+
+    pmc.preprocessing()
+
+    print(pmc.param)
+    print(pmc.varGlobalInit)
+    print("current_value_global ", pmc.current_value_global)
+    print(pmc.reward)
+    for mod in pmc.modules:
+        print("     name ", mod.name)
+        print("     ", mod.initial_value_state)
+        print("     current_value_state " , mod.current_value_state)
+        print("     ", mod.alph)
+
+        for  name, cond, outcom, funcond, hasExp in mod.trans:
+            print("         name ", name)
+            print("         cond ", cond)
+            print("outcom         ",outcom)
+            print("               ", hasExp)
+            print(" ")
+
+    num_of_run = 2
+    length_of_run = 2
+
+    estimated_reward, estimated_variance = simu(length_of_run, num_of_run, pmc)
+    print()
+    #print(estimated_reward)
+    #print(estimated_variance)
 
 #@profile
 def toy():
     file = 'example/toy.pm'
     time1 = time.time()
     pmc = myparse(file)
+    pmc.preprocessing()
     time2 = time.time()
     print('parsing of %s took %0.3f ms' % (file, (time2-time1)*1000.0))
-    num_of_run = 10000
-    length_of_run = 100
+
+    num_of_run = 2
+    length_of_run = 5
     time1 = time.time()
     estimated_reward, estimated_variance = simu(length_of_run, num_of_run, pmc)
     time2 = time.time()
@@ -52,6 +89,7 @@ def toym():
     file = 'example/toymul.pm'
     time1 = time.time()
     pmc = myparse(file)
+    pmc.preprocessing()
     time2 = time.time()
     print('parsing of %s took %0.3f ms' % (file, (time2-time1)*1000.0))
     num_of_run = 10000
@@ -83,6 +121,7 @@ def nand():
     file = 'example/nand.pm'
     time1 = time.time()
     pmc = myparse(file)
+    pmc.preprocessing()
     time2 = time.time()
     print('parsing of %s took %0.3f ms' % (file, (time2-time1)*1000.0))
     num_of_run = 2
@@ -96,6 +135,7 @@ def nand2():
     file = 'example/nand2.pm'
     time1 = time.time()
     pmc = myparse(file)
+    pmc.preprocessing()
     time2 = time.time()
     print('parsing of %s took %0.3f ms' % (file, (time2-time1)*1000.0))
     num_of_run = 1000
@@ -127,10 +167,11 @@ def zeroconf():
     file = 'example/zeroconf.pm'
     time1 = time.time()
     pmc = myparse(file)
+    pmc.preprocessing()
     time2 = time.time()
     print('parsing of %s took %0.3f ms' % (file, (time2-time1)*1000.0))
-    num_of_run = 10000
-    length_of_run = 500
+    num_of_run = 2
+    length_of_run = 5
     time1 = time.time()
     estimated_reward, estimated_variance = simu(length_of_run, num_of_run, pmc)#,{pmc.param[0]:0.3,pmc.param[1]:0.3})
     time2 = time.time()
@@ -153,12 +194,13 @@ def zeroconf():
     cb=plt.colorbar(plot)
     cb.set_label("CI width")
     plt.savefig('zeroconf_%d.png'%num_of_run)
-    plt.show()
+    #plt.show()
 
 def crowd():
     file = 'example/crowds.pm'
     time1 = time.time()
     pmc = myparse(file)
+    pmc.preprocessing()
     time2 = time.time()
     print('parsing of %s took %0.3f ms' % (file, (time2-time1)*1000.0))
     num_of_run = 10000
@@ -212,4 +254,4 @@ def main():
     print(3.92/sqrt(num_of_run)*mysub(estimated_variance, random_valuation))
 
 
-toym()
+toy()

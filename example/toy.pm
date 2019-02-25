@@ -18,4 +18,3 @@ endmodule
 rewards
     []s=4 : 1;
 endrewards
-
