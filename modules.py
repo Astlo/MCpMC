@@ -1,3 +1,6 @@
+from dill.source import getsource
+
+
 """ Define pMC with modules """
 import sympy
 def copy_dict(dic):
@@ -17,7 +20,6 @@ def exp_to_fun(exp):
             return (f(*eval))
         return g
     else:
-        
         return lambda *x: exp
 
 
@@ -27,10 +29,18 @@ def mysub(exp, dic):
         free_var = exp.free_symbols
     except:
         free_var = []
+
     reduced_dic = {x:dic[x] for x in free_var if x in dic}
+    """for x in free_var:
+        print("x ", x)
+        if x in dic:
+            print("dicx ", dic[x])"""
+    #print("reduced_dic" , reduced_dic)
     if reduced_dic:
         return exp.subs(reduced_dic)
     return exp
+
+
 class Module:
     """ module of a pMC with modules """
     def __init__(self, name):
@@ -58,10 +68,23 @@ class Module:
         """ evaluate an expression with the current value of the states
             given the current values of the global variables"""
         return mysub(exp, {**self.current_value_state, **global_substitution})
+
+    def preprocessing(self, global_substitution):
+        transitions = self.trans
+        self.trans = []
+        for  name, cond, outcom, funcond in transitions:
+            hasExp = False
+            for transition in outcom:
+                """return false if there is no symbol or no expression in transitions"""
+                if not isinstance(transition[0], (int, float, sympy.numbers.Float)):
+                    hasExp = True
+                    break
+            self.trans += [[name, cond, outcom, funcond, hasExp]]
+
     def get_possible_transitions(self, global_substitution):
         """ return the transition doable given the current value of the global variable """
-        return [[name, cond, outcom]
-                for  name, cond, outcom, funcond in self.trans
+        return [[name, cond, outcom, hasExp]
+                for  name, cond, outcom, funcond, hasExp in self.trans
                 if funcond({**global_substitution, **self.current_value_state})]
     def copy(self, name):
         """ return a copy of the module """
@@ -105,9 +128,12 @@ class Module:
     def maj(self, update, global_valu):
         """ update the current states values according to up """
         temp = copy_dict(self.current_value_state)
+        #print("current_value_state " , self.current_value_state)
         for k in self.current_value_state:
+            #print("k",k)
             if k in update:
                 self.current_value_state[k] = mysub(update[k], {**temp, **global_valu})
+                #print("new ", self.current_value_state[k])
             else:
                 self.current_value_state[k] = self.current_value_state[k]
         return temp
@@ -144,6 +170,7 @@ class PmcModules:
     def get_possible_transitions(self):
         """ return the doable transitions """
         res = [m.get_possible_transitions(self.current_value_global) for m in self.modules]
+
         name = [[tr[0] for tr in t if tr[0] != ""] for t in res]
         def good_name(action):
             """ indicate whether the name is ok for all modules"""
@@ -154,7 +181,16 @@ class PmcModules:
         name = [list(filter(good_name, na)) for i, na in enumerate(name)]
         res2 = [list(filter(lambda t: (t[0] in name[i]) or t[0] == "", a))
                 for i, a in enumerate(res)]
+        #print("res ", res2)
         return res2
+
+    def get_hasExp(self):
+        return [m.get_possible_transitions(self.current_value_global) for m in self.modules]
+    def preprocessing(self):
+        """ preprocess for each state """
+        [m.preprocessing(self.current_value_global) for m in self.modules]
+
+
     def get_module(self, name):
         """ return the module corresponding to name"""
         for mod in self.modules:
@@ -177,12 +213,15 @@ class PmcModules:
         cumu_reward = 0
         substitution = self.get_valuation()
         for rew_action, cond, reward in self.reward:
+            #print(rew_action, cond, mysub(cond, substitution))
             if (rew_action == act or act == '') and mysub(cond, substitution):
                 cumu_reward += mysub(reward, substitution)
+                #print("cumu_reward " , cumu_reward)
         return cumu_reward
     def maj(self, update):
         """ update the globale variable and all modules according to up"""
         valuation = self.get_valuation()
+        #print("glo ", self.current_value_global)
         for mod in self.modules:
             mod.maj(update, self.current_value_global)
         temp = {}
@@ -192,6 +231,7 @@ class PmcModules:
             else:
                 temp[k] = self.current_value_global[k]
         self.current_value_global = temp
+        #print("new ", self.current_value_global)
     def get_valuation(self):
         """ return the current value of all variable (globale+sates in modules)"""
         return {**dict(i for mod in self.modules
