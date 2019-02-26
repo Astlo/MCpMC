@@ -2,7 +2,7 @@ from collections import defaultdict
 from ply import lex,yacc
 from sympy.parsing.sympy_parser import parse_expr as rea
 from sympy import Function, Symbol
-from modules.modules import PmcModules, Module
+from MCpMC.modules import PmcModules, Module
 #from memory_profiler import profile
 
 

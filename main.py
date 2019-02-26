@@ -1,22 +1,17 @@
 from dill.source import getsource
-
-
-
 from math import sqrt
 from random import random
-#from sys import argv
-#from modules import mysub
-from modules.simumodules import simu
-import time
 from memory_profiler import profile
-#import re
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
-import numpy as np
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
+import numpy as np
 import sympy
-from modules.parse import myparse
+import time
+
+from MCpMC.parse import myparse
+from MCpMC.simumodules import simu
 
 def test():
     file = 'example/toy.pm'
@@ -58,8 +53,8 @@ def toy():
     time2 = time.time()
     print('parsing of %s took %0.3f ms' % (file, (time2-time1)*1000.0))
 
-    num_of_run = 2
-    length_of_run = 5
+    num_of_run = 10000
+    length_of_run = 100
     time1 = time.time()
     estimated_reward, estimated_variance = simu(length_of_run, num_of_run, pmc)
     time2 = time.time()
@@ -170,8 +165,8 @@ def zeroconf():
     pmc.preprocessing()
     time2 = time.time()
     print('parsing of %s took %0.3f ms' % (file, (time2-time1)*1000.0))
-    num_of_run = 2
-    length_of_run = 5
+    num_of_run = 10000
+    length_of_run = 500
     time1 = time.time()
     estimated_reward, estimated_variance = simu(length_of_run, num_of_run, pmc)#,{pmc.param[0]:0.3,pmc.param[1]:0.3})
     time2 = time.time()

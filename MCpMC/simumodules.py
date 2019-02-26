@@ -22,8 +22,8 @@ def sim(length, pmc,valu=None):
             if len(trans_mod) > 1:
                 raise Exception("several action possible")
             if trans_mod:
-                print("################################################################################################")
-                print(trans_mod)
+                #print("################################################################################################")
+                #print(trans_mod)
                 if valu is None:
                     name, _, outcom, hasExp = trans_mod[0]
                     norma = len(outcom)
@@ -69,7 +69,7 @@ def simu(length, num_simu, pmc,valu=None):
     accu_reward = 0
     accu_var = 0
     for _ in range(0, num_simu):
-        print("____________________________________________________________________________________________________")
+        #print("____________________________________________________________________________________________________")
         random_var_y = sim(length, pmc,valu)
         accu_reward += random_var_y
         accu_var += random_var_y*random_var_y

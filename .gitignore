@@ -39,3 +39,6 @@ coverage.xml
 
 # PyBuilder
 target/
+
+# Image matplotlib
+*.png

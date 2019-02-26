@@ -1,6 +1,3 @@
-from dill.source import getsource
-
-
 """ Define pMC with modules """
 import sympy
 def copy_dict(dic):
@@ -139,14 +136,13 @@ class Module:
         return temp
 class PmcModules:
     """ pMC with modules """
-    param = []
-    varGlobalInit = {}
-    #varGlobalMin = {}
-    #varGlobalMax = {}
-    current_value_global = {}
-    modules = []
-    reward = []
+
     def __init__(self):
+        self.param = []
+        self.varGlobalInit = {}
+        self.current_value_global = {}
+        self.modules = []
+        self.reward = []
         pass
     def add_parameter(self, param):
         """ add a parameter """
@@ -184,8 +180,6 @@ class PmcModules:
         #print("res ", res2)
         return res2
 
-    def get_hasExp(self):
-        return [m.get_possible_transitions(self.current_value_global) for m in self.modules]
     def preprocessing(self):
         """ preprocess for each state """
         [m.preprocessing(self.current_value_global) for m in self.modules]
