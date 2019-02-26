@@ -40,9 +40,26 @@ def test():
     length_of_run = 2
 
     estimated_reward, estimated_variance = simu(length_of_run, num_of_run, pmc)
+
+    print(pmc.param)
+    print(pmc.varGlobalInit)
+    print("current_value_global ", pmc.current_value_global)
+    print(pmc.reward)
+    for mod in pmc.modules:
+        print("     name ", mod.name)
+        print("     ", mod.initial_value_state)
+        print("     current_value_state " , mod.current_value_state)
+        print("     ", mod.alph)
+
+        for  name, cond, outcom, funcond, hasExp in mod.trans:
+            print("         name ", name)
+            print("         cond ", cond)
+            print("outcom         ",outcom)
+            print("               ", hasExp)
+            print(" ")
     print()
-    #print(estimated_reward)
-    #print(estimated_variance)
+    print(estimated_reward)
+    print(estimated_variance)
 
 #@profile
 def toy():
@@ -53,10 +70,10 @@ def toy():
     time2 = time.time()
     print('parsing of %s took %0.3f ms' % (file, (time2-time1)*1000.0))
 
-    num_of_run = 10000
-    length_of_run = 100
+    num_of_run = 2
+    length_of_run = 2
     time1 = time.time()
-    estimated_reward, estimated_variance = simu(length_of_run, num_of_run, pmc)
+    estimated_reward, estimated_variance = simu(length_of_run, num_of_run, pmc, {pmc.param[0]:0.4,pmc.param[1]:0.4})
     time2 = time.time()
     print('the %d simulations took %0.3f ms' % (num_of_run, (time2-time1)*1000.0))
     fig = plt.figure()

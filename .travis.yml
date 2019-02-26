@@ -15,5 +15,5 @@ script:
   - pytest
 
 # Commande pour envoyer les résultats de couverture de code à coveralls.io
-after_success:
-  coveralls
+#after_success:
+#  coveralls

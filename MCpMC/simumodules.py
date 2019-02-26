@@ -1,6 +1,7 @@
 """ Simulation of pMC with modules"""
 from random import random
-from .modules import mysub
+from MCpMC.modules import mysub
+import MCpMC.pmcmodules
 
 def typennotexp(expr):
     """return true if type is int or float"""
@@ -22,8 +23,8 @@ def sim(length, pmc,valu=None):
             if len(trans_mod) > 1:
                 raise Exception("several action possible")
             if trans_mod:
-                #print("################################################################################################")
-                #print(trans_mod)
+                print("################################################################################################")
+                print(trans_mod)
                 if valu is None:
                     name, _, outcom, hasExp = trans_mod[0]
                     norma = len(outcom)
@@ -45,21 +46,26 @@ def sim(length, pmc,valu=None):
                     pmc.maj(outcom[j][1])
                     cumu_reward += pmc.get_reward(name)
                 else:
-                    name, _, outcom = trans_mod[0]
+                    name, _, outcom, hasExp = trans_mod[0]
                     threshold = random()
                     j = 0
+                    print(threshold)
                     while j < len(outcom) and threshold > 0:
                         threshold -= mysub(mysub(outcom[j][0],valu),pmc.get_valuation())
+                        print(j, threshold, " - ",  mysub(mysub(outcom[j][0],valu),pmc.get_valuation()))
                         j += 1
                     j -= 1
                     realprob = outcom[j][0]
                     prob *= mysub(realprob, pmc.get_valuation())/mysub(mysub(outcom[j][0],valu),pmc.get_valuation())
+                    print("mysub ", mysub(realprob, pmc.get_valuation())/mysub(mysub(outcom[j][0],valu),pmc.get_valuation()))
+                    print(mysub(realprob, pmc.get_valuation()))
+                    print(mysub(mysub(outcom[j][0],valu),pmc.get_valuation()))
                     pmc.maj(outcom[j][1])
                     cumu_reward += pmc.get_reward(name)
             else:
                 numb_mod_deadlocked += 1
             end = (numb_mod_deadlocked == len(pmc.modules))
-    #print("prob ", prob)
+    print("prob ", prob*cumu_reward)
     return prob*cumu_reward
 
 
@@ -69,7 +75,7 @@ def simu(length, num_simu, pmc,valu=None):
     accu_reward = 0
     accu_var = 0
     for _ in range(0, num_simu):
-        #print("____________________________________________________________________________________________________")
+        print("____________________________________________________________________________________________________")
         random_var_y = sim(length, pmc,valu)
         accu_reward += random_var_y
         accu_var += random_var_y*random_var_y
