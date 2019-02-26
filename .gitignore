@@ -42,3 +42,6 @@ target/
 
 # Image matplotlib
 *.png
+
+# Coveralls 
+.coveralls.yml

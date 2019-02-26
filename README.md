@@ -28,3 +28,6 @@ Dependencies:
 pip install -r requirements.txt
 
 python setup.py install
+
+[![Coverage Status](https://coveralls.io/repos/github/Astlo/MCpMC/badge.svg?branch=master)](https://coveralls.io/github/Astlo/MCpMC?branch=master)
+![Travis (.org)](https://img.shields.io/travis/Astlo/MCpMC.svg)
